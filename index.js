@@ -1,5 +1,5 @@
-if(window.location.pathname.endsWith('index.html') && !localStorage.getItem('token')){
-    window.location.href='login.html'
+if (window.location.pathname.endsWith('index.html') && !localStorage.getItem('token')) {
+    window.location.href = 'login.html'
 }
 
 
@@ -10,118 +10,118 @@ function abrirTab(index) {
     document.querySelectorAll('.tab-content')[index].classList.add('active');
     document.querySelectorAll('.tab-btn')[index].classList.add('active');
 }
-function formatarResposta(resultado){
-    if(resultado.erro){
+function formatarResposta(resultado) {
+    if (resultado.erro) {
         return `<div style="color:#721c24;padding:15px;background:#f8d7da;border:1px solid #f5c6cb;border-radius:5px;font-weight:bold;">
             erro:${resultado.erro}</div>`;
     }
-    let html=`<div style="padding:15px;background:#d4eda;color:#15724;border:1px solid #c3e6cd;border-radius:5px;"`;
-        html+=`<h3 style=",margin-top=0;margin-bottom:15px;border-bottom:1px solid #c3e6cb;padding-bottom:5px;">sucesso</h3>`
-        html+=`<ul style="list-style-type:none;padding-left:0;margin:0;"`;
-        
-        for(const[key,value]of Object.entries(resultado)){
-            let label=key.charAt(0).toLocaleUpperCase()+key.slice(1)
-            if(key.toLocaleLowerCase()==="imc"){
-                label="IMC";
-            }
-            html+=`<li style="margin-buttom:8px;font-size:16;">
+    let html = `<div style="padding:15px;background:#d4eda;color:#15724;border:1px solid #c3e6cd;border-radius:5px;"`;
+    html += `<h3 style=",margin-top=0;margin-bottom:15px;border-bottom:1px solid #c3e6cb;padding-bottom:5px;">sucesso</h3>`
+    html += `<ul style="list-style-type:none;padding-left:0;margin:0;"`;
+
+    for (const [key, value] of Object.entries(resultado)) {
+        let label = key.charAt(0).toLocaleUpperCase() + key.slice(1)
+        if (key.toLocaleLowerCase() === "imc") {
+            label = "IMC";
+        }
+        html += `<li style="margin-buttom:8px;font-size:16;">
                 <strong style="color:#0b2e13">${label}</strong> ${value}
                 </li>`
-        }
-        html+=`</ul>
+    }
+    html += `</ul>
         </div>`;
-        return html;
-}   
-async function calcularImc(){
-    const dados={
+    return html;
+}
+async function calcularImc() {
+    const dados = {
         nome: document.getElementById("nome").value,
         idade: document.getElementById('idade').value,
         altura: document.getElementById('altura').value,
         peso: document.getElementById('peso').value
     }
     try {
-        const response = await fetch("http://localhost:3000/imc",{
+        const response = await fetch("http://localhost:3000/imc", {
             method: "POST",
-            headers:{"content-type":"application/json"},
+            headers: { "content-type": "application/json" },
             body: JSON.stringify(dados)
         });
         const resultado = await response.json();
         document.getElementById("resultadoImc").innerHTML = formatarResposta(resultado);
     } catch (error) {
-        document.getElementById("resultadoImc").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
+        document.getElementById("resultadoImc").innerHTML = formatarResposta({ error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde" });
     }
 }
-async function calcularMedia(){
-    const dados={
+async function calcularMedia() {
+    const dados = {
         nota1: document.getElementById("nota1").value,
         nota2: document.getElementById('nota2').value
     }
     try {
-        const response = await fetch("http://localhost:3000/media",{
+        const response = await fetch("http://localhost:3000/media", {
             method: "POST",
-            headers:{"content-type":"application/json"},
+            headers: { "content-type": "application/json" },
             body: JSON.stringify(dados)
         });
         const resultado = await response.json();
         document.getElementById("resultadoMedia").innerHTML = formatarResposta(resultado);
     } catch (error) {
-        document.getElementById("resultadoMedia").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
+        document.getElementById("resultadoMedia").innerHTML = formatarResposta({ error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde" });
     }
 }
-async function fazerLogin(){
-    const dados={
+async function fazerLogin() {
+    const dados = {
         email: document.getElementById("email").value,
         senha: document.getElementById('senha').value
     }
     try {
-        const response = await fetch("http://localhost:3000/login",{
+        const response = await fetch("http://localhost:3000/login", {
             method: "POST",
-            headers:{"content-type":"application/json"},
+            headers: { "content-type": "application/json" },
             body: JSON.stringify(dados)
         });
         const resultado = await response.json();
-        if(resultado.token){
+        if (resultado.token) {
             localStorage.setItem("token", resultado.token);
-            window.location.href='index.html';
-        }else{
+            window.location.href = 'index.html';
+        } else {
             alert('Email ou Senha incorreto');
         }
     } catch (error) {
-        document.getElementById("resultadoLogin").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
+        document.getElementById("resultadoLogin").innerHTML = formatarResposta({ error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde" });
     }
 }
-function logout(){
+function logout() {
     localStorage.removeItem('token')
-    window.location.href="login.html"
+    window.location.href = "login.html"
 }
 
 
 
 function buscarEndereco() {
     const CEP = document.getElementById('CEP').value;
-  
-  
+
+
     fetch(`https://viacep.com.br/ws/${CEP}/json/`)
-      .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro na requisição: ' + response.status);
-        }
-        return response.json();
-      })
-      .then(data => {
-         // alert(data)
-        document.getElementById('rua').value= data.logradouro
-        document.getElementById('cidade').value= data.localidade
-        document.getElementById('estado').value= data.estado
-        document.getElementById('numero').focus()
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('erro: ', error)
-      });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // alert(data)
+            document.getElementById('rua').value = data.logradouro
+            document.getElementById('cidade').value = data.localidade
+            document.getElementById('estado').value = data.estado
+            document.getElementById('numero').focus()
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('erro: ', error)
+        });
 }
-async function fazerCadastro(){
-    const dados={
+async function fazerCadastro() {
+    const dados = {
         nome: document.getElementById("nome").value,
         CPF: document.getElementById('CPF').value,
         CEP: document.getElementById('CEP').value,
@@ -131,9 +131,9 @@ async function fazerCadastro(){
         numero: document.getElementById('numero').value
     }
     try {
-        const response = await fetch("http://localhost:3000/clientes",{
+        const response = await fetch("http://localhost:3000/clientes", {
             method: "POST",
-            headers:{"content-type":"application/json"},
+            headers: { "content-type": "application/json" },
             body: JSON.stringify(dados)
         });
         const resultado = await response.json();
@@ -148,19 +148,19 @@ async function fazerCadastro(){
         }
         document.getElementById("resultadoCadastro").innerHTML = formatarResposta(resultado);
     } catch (error) {
-        document.getElementById("resultadoCadastro").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
+        document.getElementById("resultadoCadastro").innerHTML = formatarResposta({ error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde" });
     }
 }
-async function fazerCadastroUsuario(){
-    const dados={
+async function fazerCadastroUsuario() {
+    const dados = {
         nome: document.getElementById("nome").value,
         email: document.getElementById('email').value,
         senha: document.getElementById('senha').value
     }
     try {
-        const response = await fetch("http://localhost:3000/usuarios",{
+        const response = await fetch("http://localhost:3000/usuarios", {
             method: "POST",
-            headers:{"content-type":"application/json"},
+            headers: { "content-type": "application/json" },
             body: JSON.stringify(dados)
         });
         const resultado = await response.json();
@@ -171,27 +171,47 @@ async function fazerCadastroUsuario(){
         }
         document.getElementById("resultadoCadastroUsuario").innerHTML = formatarResposta(resultado);
     } catch (error) {
-        document.getElementById("resultadoCadastroUsuario").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
+        document.getElementById("resultadoCadastroUsuario").innerHTML = formatarResposta({ error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde" });
     }
 }
-
-
-async function pesquisarCliente(){
-    const dados={
-        pesquisarCPF: document.getElementById("pesquisarCPF").value,
+async function buscarClientes() {
+    const CPFBusca = document.getElementById(buscar_CPF).value.trim();
+    if (!CPFBusca) {
+        listarClientes()
+        return;
     }
     try {
-        const response = await fetch("http://localhost:3000/pesquisarClientes   ",{
-            method: "POST",
-            headers:{"content-type":"application/json"},
-            body: JSON.stringify(dados)
-        });
-        const resultado = await response.json();
-        document.getElementById("resultadoPesquisaCliente").innerHTML = formatarResposta(resultado);
-        if(resultado.erro){
-            alert('Cliente não encontrado');
-        }
+        const res = await fetch("http://localgost:3000/clientes");
+        const clientes = await res.json();
+        const CFPLimpo = CPFBusca.replace(/\D/g, '');
+        const filtrados = clientes.filter(c => c.CPF && c.CPF.replace(/\D/g, '') === CFPLimpo);
+        renderizarClientes(filtrados);
     } catch (error) {
-        document.getElementById("resultadoPesquisaCliente").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
+        const container = document.getElementById("listarClientes");
+        if(container){
+            container.innerHTML=`<div style= "color:#721c24; padding:15px; background:#f8d7da; border:1px solid #f5c6cd; border-radius; 5px">falha ao buscar o clientes</div>`
+        }
     }
 }
+async function listarClientes(){
+    const burcarinput = document.getElementById("buscar_CPF")
+    if(buscarInput){
+        buscarInput.value = '';
+    }
+    try {
+        const res = await fetch("http://localgost:3000/clientes");
+        const clientes = await res.json();
+        renderizarClientes(clientes);
+    } catch (error) {
+        if(container){
+             container.innerHTML=`<div style= "color:#721c24; padding:15px; background:#f8d7da; border:1px solid #f5c6cd; border-radius; 5px">falha ao carregar clientes do servidor</div>`
+        }
+    }
+}
+function renderizarClientes(clientes){
+    const container = document.getElementById("listarClientes");
+}
+
+
+
+
